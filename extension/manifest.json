@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "LLM Export",
+  "version": "1.0.2",
+  "description": "Export an AI chat transcript to Markdown + JSON, with thinking and tool calls expanded. v1 supports Claude (claude.ai).",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "downloads",
+    "storage",
+    "contextMenus"
+  ],
+  "action": {
+    "default_title": "Export this chat",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

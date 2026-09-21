@@ -1,0 +1,15 @@
+# fixtures are generated from private chat dumps kept outside the repo
+tests/fixtures/
+tests/.ext-test/
+
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
+
+# build output lives in ../builds (outside the repo), but never commit a stray zip
+*.zip
+
+# project/handoff docs live outside the repo, beside development/ and prompts/.
+# Only contributor-facing docs belong in docs/ here.
+docs/handoff/

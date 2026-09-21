@@ -13,3 +13,6 @@ Thumbs.db
 # project/handoff docs live outside the repo, beside development/ and prompts/.
 # Only contributor-facing docs belong in docs/ here.
 docs/handoff/
+
+# scratch preview written by the store-screenshot script
+extension/.store-preview.html

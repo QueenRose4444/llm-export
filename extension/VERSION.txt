@@ -1,4 +1,4 @@
-llm-export 1.2.0
+llm-export 1.2.1
 
 To update: "Extract here" the new zip into the same place as last time. It
 always unpacks to a folder called llm-export-extension, whatever the zip is

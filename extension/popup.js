@@ -127,7 +127,9 @@ function showSummary(s) {
     `<dt>Messages</dt><dd>${st.messages} (${st.user} user / ${st.assistant} assistant)</dd>` +
     `<dt>Tool calls</dt><dd>${st.toolCalls || 0}${st.toolPayloadsHidden ? ` — ${st.toolPayloadsHidden} hidden` : ''}</dd>` +
     (st.thinkingBlocks ? `<dt>Thinking</dt><dd>${st.thinkingBlocks} block(s)</dd>` : '') +
-    `<dt>Files</dt><dd>${(s.saved || []).join('<br>')}</dd>` +
+    /* just the file names — the footer already says which folder they are in,
+       and the full paths wrap over three lines each */
+    `<dt>Files</dt><dd>${(s.saved || []).map(f => f.split('/').pop()).join('<br>')}</dd>` +
     '</dl>' +
     (st.toolPayloadsHidden && s.notes && s.notes.hiddenPayloads
       ? `<div class="warn">${s.notes.hiddenPayloads}</div>` : '');

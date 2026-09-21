@@ -47,9 +47,12 @@ if (chrome.downloads.onDeterminingFilename) {
   });
 }
 
-/** What Chrome actually called the file, rather than what we asked for. */
+/** What Chrome actually called the file, rather than what we asked for.
+ *  A bigger file can still be mid-write when first asked, and an empty
+ *  filename then reads as "no answer" — so wait for one rather than falling
+ *  back, or the two files report their names in different shapes. */
 async function actualName(id) {
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 60; i++) {
     const [item] = await chrome.downloads.search({ id });
     if (item && item.filename) return item.filename.split(/[\\/]/).slice(-2).join('/');
     await new Promise(r => setTimeout(r, 100));
@@ -72,8 +75,9 @@ async function saveFiles(files) {
     for (let i = 0; i < 40 && pendingName; i++) await new Promise(r => setTimeout(r, 50));
     pendingName = null;
     /* report the real name — reporting the intended one is how the
-       download.md bug stayed invisible in v1.0.0 */
-    saved.push((id != null && await actualName(id)) || f.name);
+       download.md bug stayed invisible in v1.0.0. The fallback keeps the
+       folder so both files read the same way. */
+    saved.push((id != null && await actualName(id)) || name);
   }
   return saved;
 }

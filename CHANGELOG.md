@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.2.0 — 2026-09-21
+
+**Gemini is supported.** Both modes — `/app` and `/spark` — which look different but are built from
+the same components underneath, so one provider reads both. Messages, markdown and thinking blocks
+all come across; thinking is expanded before reading, including the "Show all" that hides the rest
+of a truncated thought. No tool-call parsing yet.
+
+Verified against a real 40-message conversation: all 40 messages, in order, with all 20 thinking
+blocks.
+
+**Two fixes that came out of building it:**
+
+Gemini labels every user message with an `cdk-visually-hidden` heading repeating its first hundred
+characters — Angular Material's screen-reader class, which the exporter did not know to skip. Every
+user message exported as a duplicate of itself. `.cdk-visually-hidden` and `.visually-hidden` now
+sit alongside `.sr-only` in the list of things that are page furniture rather than content.
+
+Fixtures built from a capture now get a `<meta charset="utf-8">` if the page lacks one. Sites that
+declare their encoding in an HTTP header lose it when saved to a file, and the test then blames the
+exporter for the site's own smart quotes.
+
 ## 1.1.1 — 2026-09-21
 
 **The capture tool was calling every site "not virtualised", including ones it could not possibly

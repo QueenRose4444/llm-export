@@ -124,6 +124,23 @@ try {
     check('timestamps the messages', !!doc.messages[0].time, 'no time');
     check('fences code blocks', /```json/.test(md), 'no fenced json');
   }
+  /* 5. Gemini, from a real capture */
+  if (made.includes('gemini-spark.html')) {
+    const { doc, md } = await exportFrom(chrome, 'gemini-spark.html');
+    console.log('\ngemini-spark.html (Gemini capture)');
+    check('picks the gemini provider', doc.source.provider === 'gemini', doc.source.provider);
+    check('reads every message', doc.stats.messages === 40, 'got ' + doc.stats.messages);
+    check('alternates user and assistant',
+          doc.messages.every((m, i) => m.role === (i % 2 === 0 ? 'user' : 'assistant')),
+          'roles out of order');
+    check('captures the thinking blocks', doc.stats.thinkingBlocks === 20,
+          String(doc.stats.thinkingBlocks) + ' of 20');
+    /* Gemini labels every user message with a cdk-visually-hidden heading that
+       repeats its first 100 characters; exporting it duplicates the message */
+    check('drops the screen-reader label', !/You said/.test(md), 'hidden label leaked in');
+    check('names the chat from its opening message',
+          doc.source.title.length > 10 && !/^gemini/i.test(doc.source.title), doc.source.title);
+  }
 } finally {
   await chrome.kill();
 }

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LLM Export",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Export an AI chat transcript to Markdown + JSON, with thinking and tool calls expanded. v1 supports Claude (claude.ai).",
   "permissions": [
     "activeTab",

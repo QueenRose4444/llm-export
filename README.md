@@ -129,6 +129,7 @@ window.LLM_EXPORT_OPTS = { md: true, json: false, copyMd: true };
 | Site | Provider id | Messages | Thinking | Tool calls |
 | --- | --- | --- | --- | --- |
 | claude.ai | `claude` | yes | yes, when present | yes — payloads except on share links |
+| gemini.google.com | `gemini` | yes, both `/app` and `/spark` | yes | not yet |
 
 ### Want a site supported?
 

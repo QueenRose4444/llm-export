@@ -10,6 +10,11 @@
   /* Nodes that are chrome, not content. Providers can extend this list. */
   const SKIP = [
     '.sr-only',
+    /* Angular Material's screen-reader-only class. Gemini uses it for a
+       "You said <first 100 characters>" heading on every user message, which
+       otherwise exports as a duplicate of the message it labels. */
+    '.cdk-visually-hidden',
+    '.visually-hidden',
     '[aria-hidden="true"]',
     '[role="toolbar"]',
     '[data-cds="MessageActions"]',

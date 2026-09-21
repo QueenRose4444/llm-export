@@ -93,6 +93,7 @@ export async function launchChrome(opts = {}) {
   return {
     port, send,
     on: fn => { listeners.add(fn); return () => listeners.delete(fn); },
+    dispose() { return this.kill(); },
     async kill() {
       try { ws.close(); } catch (_) {}
       proc.kill();

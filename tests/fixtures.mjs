@@ -9,12 +9,13 @@
  * pill mounts its rows, clicking a row mounts its payload panel. Without that,
  * a static dump would only ever test the collapsed case.
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs';
 import { dirname, resolve, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const here    = dirname(fileURLToPath(import.meta.url));
-const dataDir = resolve(here, '../../../data');
+const here     = dirname(fileURLToPath(import.meta.url));
+const dataDir  = resolve(here, '../../../data');
+const captures = resolve(dataDir, 'captures');
 const outDir  = resolve(here, 'fixtures');
 
 export const FIXTURES = outDir;
@@ -121,7 +122,15 @@ function page(title, body, mode) {
      the browser discard its head/body, so patch those in place instead — with
      the site's own scripts stripped, since they cannot load offline. */
   if (/^\s*(<!doctype|<html[\s>])/i.test(body)) {
-    const doc = body.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
+    let doc = body.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
+    /* Sites that declare their charset in an HTTP header rather than a meta tag
+       come out as mojibake once saved to a file, and the test then blames the
+       exporter for the site's smart quotes. */
+    if (!/<meta[^>]+charset/i.test(doc.slice(0, 4000))) {
+      doc = /<head[^>]*>/i.test(doc)
+        ? doc.replace(/<head[^>]*>/i, m => m + '<meta charset="utf-8">')
+        : '<meta charset="utf-8">' + doc;
+    }
     const inject = `<style>${SHELL_CSS}</style>${fakeUi(mode)}`;
     return /<\/body>/i.test(doc)
       ? doc.replace(/<\/body>/i, inject + '</body>')
@@ -218,6 +227,17 @@ second line of question ${i + 1}</p></div>`,
 }
 
 /* Build */
+/* Captures are whole-page dumps taken by the extension itself, saved as JSON
+   with the HTML inside. page() already knows how to patch a full document. */
+function fromCapture(match, out, mode = 'full') {
+  if (!existsSync(captures)) return null;
+  const hit = readdirSync(captures).filter(f => f.includes(match) && f.endsWith('.json')).sort().pop();
+  if (!hit) return null;
+  const dump = JSON.parse(readFileSync(join(captures, hit), 'utf8'));
+  writeFileSync(join(outDir, out), page(dump.title || 'chat', dump.html, mode), 'utf8');
+  return out;
+}
+
 export function buildFixtures() {
   mkdirSync(outDir, { recursive: true });
   const made = [];
@@ -249,9 +269,18 @@ export function buildFixtures() {
   writeFileSync(join(outDir, 'long-virtual.html'), syntheticVirtual(20), 'utf8');
   made.push('long-virtual.html');
 
+  for (const [match, out] of [
+    ['gemini-google-com-2026-09-21-05-21', 'gemini-spark.html'],
+    ['chatgpt-com-2026-09-21-05-39',       'chatgpt-turns.html'],
+  ]) {
+    const f = fromCapture(match, out);
+    if (f) made.push(f);
+  }
+
   return made;
 }
 
-if (import.meta.url === `file://${process.argv[1].replace(/\\/g, '/')}`) {
+/* on Windows a file:// URL built by hand does not match import.meta.url */
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   console.log(buildFixtures().join('\n'));
 }

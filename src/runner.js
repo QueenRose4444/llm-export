@@ -17,9 +17,7 @@
 
   const richness = m => JSON.stringify(m.parts).length;
 
-  /* ---------------------------------------------------------------- *
-   * Tool call index — the flat view that makes a connector easy to audit
-   * ---------------------------------------------------------------- */
+  /* Tool call index — the flat view that makes a connector easy to audit */
   const pick = (call, re) => {
     const hit = call.payloads.find(p => re.test(p.label));
     return hit ? hit.text : null;
@@ -54,9 +52,7 @@
     return calls;
   }
 
-  /* ---------------------------------------------------------------- *
-   * Markdown report
-   * ---------------------------------------------------------------- */
+  /* Markdown report */
   function renderMd(d) {
     const L = [];
     L.push('# ' + d.source.title, '');
@@ -121,9 +117,7 @@
     return L.join('\n').replace(/\n{4,}/g, '\n\n\n');
   }
 
-  /* ---------------------------------------------------------------- *
-   * run()
-   * ---------------------------------------------------------------- */
+  /* run() */
   async function run(opts) {
     const cfg = Object.assign({}, DEFAULTS, opts || {});
     const provider = (cfg.provider && NS.providers.find(p => p.id === cfg.provider)) || NS.detect();
@@ -232,9 +226,7 @@
     };
   }
 
-  /* ---------------------------------------------------------------- *
-   * Saving (page-side blob download; the extension uses chrome.downloads)
-   * ---------------------------------------------------------------- */
+  /* Saving (page-side blob download; the extension uses chrome.downloads) */
   function download(name, text, type) {
     const url = URL.createObjectURL(new Blob([text], { type }));
     const a = document.createElement('a');

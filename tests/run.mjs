@@ -49,9 +49,7 @@ console.log('  ' + made.join(', ') + '\n');
 const chrome = await launchChrome({ headless: !headed });
 
 try {
-  /* ---------------------------------------------------------------- *
-   * 1. Synthetic virtualised chat — the real risk: rows that unmount
-   * ---------------------------------------------------------------- */
+  /* 1. Synthetic virtualised chat — the real risk: rows that unmount */
   {
     const { doc, md } = await exportFrom(chrome, 'long-virtual.html');
     console.log('long-virtual.html');
@@ -81,9 +79,7 @@ try {
     check('tool call index in the report', /## Tool call index/.test(md), 'index missing');
   }
 
-  /* ---------------------------------------------------------------- *
-   * 2. Real shared snapshot (non-virtualised, payloads stripped)
-   * ---------------------------------------------------------------- */
+  /* 2. Real shared snapshot (non-virtualised, payloads stripped) */
   if (made.includes('share-flat.html')) {
     const { doc, md } = await exportFrom(chrome, 'share-flat.html');
     console.log('\nshare-flat.html (real shared chat dump)');
@@ -103,9 +99,7 @@ try {
     check('drops the site chrome', !/Read aloud|Report$/m.test(md), 'toolbar text leaked in');
   }
 
-  /* ---------------------------------------------------------------- *
-   * 3. Same chat, whole-page dump including the sidebar
-   * ---------------------------------------------------------------- */
+  /* 3. Same chat, whole-page dump including the sidebar */
   if (made.includes('share-fullpage.html')) {
     const { doc, md } = await exportFrom(chrome, 'share-fullpage.html');
     console.log('\nshare-fullpage.html (whole page, sidebar and all)');
@@ -113,9 +107,7 @@ try {
     check('ignores the sidebar', !/Recents|New chat/.test(md), 'sidebar text leaked in');
   }
 
-  /* ---------------------------------------------------------------- *
-   * 4. Owned chat with a real MCP tool call
-   * ---------------------------------------------------------------- */
+  /* 4. Owned chat with a real MCP tool call */
   if (made.includes('chat-virtual.html')) {
     const { doc, md } = await exportFrom(chrome, 'chat-virtual.html');
     console.log('\nchat-virtual.html (owned chat, virtualised)');

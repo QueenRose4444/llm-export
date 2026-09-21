@@ -134,9 +134,7 @@ ${fakeUi(mode)}
 </body></html>`;
 }
 
-/* ------------------------------------------------------------------ *
- * Synthetic virtualised conversation
- * ------------------------------------------------------------------ */
+/* Synthetic virtualised conversation */
 function syntheticVirtual(pairs = 20) {
   const rows = [];
   for (let i = 0; i < pairs; i++) {
@@ -219,9 +217,7 @@ second line of question ${i + 1}</p></div>`,
   return page('Synthetic virtual chat - Claude', body, 'full');
 }
 
-/* ------------------------------------------------------------------ *
- * Build
- * ------------------------------------------------------------------ */
+/* Build */
 export function buildFixtures() {
   mkdirSync(outDir, { recursive: true });
   const made = [];

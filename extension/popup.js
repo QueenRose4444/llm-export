@@ -13,9 +13,7 @@ const els = {
 
 let lastMd = null;
 
-/* ---------------------------------------------------------------- *
- * Preferences
- * ---------------------------------------------------------------- */
+/* Preferences */
 async function loadPrefs() {
   const prefs = Object.assign({}, DEFAULT_PREFS, (await chrome.storage.local.get(PREFS))[PREFS]);
   els.md.checked = prefs.md;
@@ -35,9 +33,7 @@ function readPrefs() {
 
 const savePrefs = () => chrome.storage.local.set({ [PREFS]: readPrefs() });
 
-/* ---------------------------------------------------------------- *
- * Detection
- * ---------------------------------------------------------------- */
+/* Detection */
 async function activeTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   return tab;
@@ -72,9 +68,7 @@ async function detect() {
   }
 }
 
-/* ---------------------------------------------------------------- *
- * Running
- * ---------------------------------------------------------------- */
+/* Running */
 async function run() {
   const tab = await activeTab();
   if (!tab || tab.id == null) return;
@@ -99,9 +93,7 @@ async function run() {
   }
 }
 
-/* ---------------------------------------------------------------- *
- * Reporting
- * ---------------------------------------------------------------- */
+/* Reporting */
 function showSummary(s) {
   els.run.disabled = false;
   if (!s) return;
@@ -138,9 +130,7 @@ chrome.runtime.onMessage.addListener(msg => {
   if (msg.type === 'llm-export:cancelled') { els.status.textContent = 'Cancelled.'; els.run.disabled = false; }
 });
 
-/* ---------------------------------------------------------------- *
- * Wiring
- * ---------------------------------------------------------------- */
+/* Wiring */
 els.run.addEventListener('click', run);
 els.copy.addEventListener('click', async () => {
   if (!lastMd) return;

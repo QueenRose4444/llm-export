@@ -60,9 +60,17 @@ The runner turns `tools` parts into the flat `toolCalls` index, matching payload
 
 **Give virtualised rows a stable key.** If the site unmounts rows as you scroll, `orderKey` is what stops the harvester counting a row twice or losing it. Prefer whatever the site already puts in the DOM — `aria-posinset`, a row index attribute. Return `null` when the list isn't virtualised and the runner falls back to DOM order in a single pass.
 
+## Capturing a site first
+
+Before writing anything, take a dump of the site with [`tools/capture-dom.js`](../tools/capture-dom.js) — paste it into DevTools on a conversation. It saves the page HTML plus a summary of the structures a provider hooks into: which `data-testid` values exist, what scrolls, whether the transcript is virtualised, how many collapsible buttons there are.
+
+**Expand a tool call and a thinking block by hand before running it.** Those panels usually do not exist in the DOM until clicked, so a dump taken while they are collapsed cannot tell you what a payload looks like.
+
+Worth capturing per site: an ordinary conversation, a long one (to see whether it virtualises), one with tool calls expanded, and a shared link if the site has sharing — a share may be a different page shape, and may have content stripped from it.
+
 ## Testing it
 
-`tests/fixtures.mjs` builds pages from DOM dumps. To capture one: open a chat, F12 → Elements, right-click the transcript container → Copy → Copy outerHTML, and save it as a `.txt` under the (gitignored, outside-the-repo) data folder. Add a fixture entry plus checks in `tests/run.mjs`.
+`tests/fixtures.mjs` builds pages from those dumps, kept outside the repo. Add a fixture entry plus checks in `tests/run.mjs`.
 
 If the site collapses blocks, extend the fake-UI script in `fixtures.mjs` so clicking mounts the panel — a static dump can only ever test the collapsed case, which is the case that matters least.
 

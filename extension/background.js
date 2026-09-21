@@ -12,9 +12,7 @@ const MENU_ID = 'llm-export:export-chat';
 
 const DEFAULT_PREFS = { md: true, json: true, expand: true, askName: false };
 
-/* ------------------------------------------------------------------ *
- * Downloads
- * ------------------------------------------------------------------ */
+/* Downloads */
 
 /** UTF-8 safe data: URL — a service worker has no URL.createObjectURL. */
 function toDataUrl(text, mime) {
@@ -80,9 +78,7 @@ async function saveFiles(files) {
   return saved;
 }
 
-/* ------------------------------------------------------------------ *
- * Right-click menu
- * ------------------------------------------------------------------ */
+/* Right-click menu */
 function installMenu() {
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
@@ -103,17 +99,13 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   await runInTab(tab.id, Object.assign({}, prefs, { askName: true }));   // the menu always asks
 });
 
-/* ------------------------------------------------------------------ *
- * Running an export in a tab
- * ------------------------------------------------------------------ */
+/* Running an export in a tab */
 export async function runInTab(tabId, opts) {
   await chrome.scripting.executeScript({ target: { tabId }, files: ['content.js'] });
   return chrome.tabs.sendMessage(tabId, { type: 'llm-export:run', opts });
 }
 
-/* ------------------------------------------------------------------ *
- * Messages from the content script
- * ------------------------------------------------------------------ */
+/* Messages from the content script */
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (!msg || typeof msg.type !== 'string' || !msg.type.startsWith('llm-export:')) return;
 

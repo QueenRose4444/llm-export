@@ -22,9 +22,7 @@
 
   const isRowButton = b => !!b.querySelector('[data-testid="tool-row-caret"]');
 
-  /* ---------------------------------------------------------------- *
-   * Tool + thinking blocks
-   * ---------------------------------------------------------------- */
+  /* Tool + thinking blocks */
 
   /** From a tool row button, climb to the wrapper holding its payload panel. */
   function findPayloadPanel(btn) {
@@ -122,9 +120,7 @@
     return map;
   }
 
-  /* ---------------------------------------------------------------- *
-   * Messages
-   * ---------------------------------------------------------------- */
+  /* Messages */
   function collectParts(msgEl, role) {
     if (role === 'user') {
       const text = md.of(msgEl);
@@ -167,9 +163,7 @@
     return null;
   }
 
-  /* ---------------------------------------------------------------- *
-   * Provider
-   * ---------------------------------------------------------------- */
+  /* Provider */
   NS.register({
     id: 'claude',
     label: 'Claude',

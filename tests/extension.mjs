@@ -30,9 +30,7 @@ const check = (name, ok, detail) => {
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-/* ---------------------------------------------------------------- *
- * Fixture server
- * ---------------------------------------------------------------- */
+/* Fixture server */
 buildFixtures();
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json' };
 const server = createServer((req, res) => {
@@ -44,9 +42,7 @@ const server = createServer((req, res) => {
 await new Promise(ok => server.listen(0, '127.0.0.1', ok));
 PORT = server.address().port;
 
-/* ---------------------------------------------------------------- *
- * Test copy of the extension
- * ---------------------------------------------------------------- */
+/* Test copy of the extension */
 const work    = mkdtempSync(join(tmpdir(), 'llm-export-ext-'));
 const extDir  = join(work, 'ext');
 const dlDir   = join(work, 'downloads');
@@ -72,9 +68,7 @@ const chrome = await launchChrome({
 
 try {
 
-  /* ---------------------------------------------------------------- *
-   * 1. Does it load at all?
-   * ---------------------------------------------------------------- */
+  /* 1. Does it load at all? */
   /* Chrome 137 removed --load-extension, and 153 does not honour it even with
      --enable-unsafe-extension-debugging. Extensions.loadUnpacked is the CDP
      replacement; where it is missing there is no scripted way in, so the run
@@ -140,9 +134,7 @@ try {
       contexts:['page'], documentUrlPatterns: ${JSON.stringify(patterns)} }, () => r(!chrome.runtime.lastError)); }))`);
   check('right-click menu accepts those patterns', menu === true, 'contextMenus.create rejected them');
 
-  /* ---------------------------------------------------------------- *
-   * 2. Full export through the extension plumbing
-   * ---------------------------------------------------------------- */
+  /* 2. Full export through the extension plumbing */
   const url = `http://127.0.0.1:${PORT}/long-virtual.html`;
   const { targetId } = await chrome.send('Target.createTarget', { url });
   await sleep(1200);

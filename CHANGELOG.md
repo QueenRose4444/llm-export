@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.0 — 2026-09-21
+
+**Page capture, for adding support for a new site.** Tick **Developer mode** in the popup and a
+**Capture this page** button appears; it saves the page HTML plus a summary of the structures a
+provider needs — which `data-testid` values exist, what scrolls, whether the transcript is
+virtualised, how many collapsible blocks are still closed. The button also appears on its own
+whenever the popup finds no supported chat, which is exactly when a capture is worth taking.
+
+In the console bundle it is `LLMExport.captureAndSave()`.
+
+Capturing while a tool block is collapsed is the easy mistake — the payload does not exist in the
+page until it is clicked — so the result says how many closed blocks it saw and asks you to open
+them and capture again.
+
 ## 1.0.2 — 2026-09-21
 
 **Updating no longer means re-adding the extension.** The release zip now wraps everything in a

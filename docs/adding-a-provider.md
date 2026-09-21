@@ -62,7 +62,9 @@ The runner turns `tools` parts into the flat `toolCalls` index, matching payload
 
 ## Capturing a site first
 
-Before writing anything, take a dump of the site with [`tools/capture-dom.js`](../tools/capture-dom.js) — paste it into DevTools on a conversation. It saves the page HTML plus a summary of the structures a provider hooks into: which `data-testid` values exist, what scrolls, whether the transcript is virtualised, how many collapsible buttons there are.
+Before writing anything, take a dump of the site. Tick **Developer mode** in the extension's popup and press **Capture this page** — the button also appears on its own whenever the popup finds no supported chat, which is exactly when a capture is worth having. From the console bundle it's `LLMExport.captureAndSave()`.
+
+A capture saves the page HTML plus a summary of the structures a provider hooks into: which `data-testid` values exist, what scrolls, whether the transcript is virtualised, how many collapsible blocks are still closed.
 
 **Expand a tool call and a thinking block by hand before running it.** Those panels usually do not exist in the DOM until clicked, so a dump taken while they are collapsed cannot tell you what a payload looks like.
 

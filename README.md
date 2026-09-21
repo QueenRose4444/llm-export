@@ -48,6 +48,7 @@ The popup tells you what it found before you run it — which site, whether it's
 | Structured data | `.json` with every message, part, and a flat `toolCalls` index |
 | Open thinking & tool blocks | Clicks every collapsed block open first. Leave this on — it's the whole point |
 | Ask me for a file name | Prompts, defaulting to the chat's title (always on for the right-click menu) |
+| Developer mode | Adds a **Capture this page** button, for helping add support for a new site |
 
 ---
 

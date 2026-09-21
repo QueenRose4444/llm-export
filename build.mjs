@@ -27,6 +27,7 @@ const ORDER = [
   'markdown.js',
   ...providerFiles.map(f => 'providers/' + f),
   'runner.js',
+  'capture.js',
 ];
 
 const core = ORDER.map(f => readFileSync(join(srcDir, f), 'utf8')).join('\n');

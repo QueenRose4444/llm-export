@@ -6,7 +6,7 @@
 
   const NS = globalThis.LLMExport || (globalThis.LLMExport = {});
 
-  NS.version   = '1.0.2';
+  NS.version   = '1.1.0';
   NS.providers = NS.providers || [];
 
   /** Register a site adapter. See src/providers/claude.js for the shape. */

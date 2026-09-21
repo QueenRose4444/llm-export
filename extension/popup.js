@@ -3,12 +3,13 @@
 
 const PREFS = 'llm-export:prefs';
 const LAST  = 'llm-export:last';
-const DEFAULT_PREFS = { md: true, json: true, expand: true, askName: false };
+const DEFAULT_PREFS = { md: true, json: true, expand: true, askName: false, dev: false };
 
 const $ = id => document.getElementById(id);
 const els = {
   site: $('site'), run: $('run'), copy: $('copy'), status: $('status'), result: $('result'),
   md: $('opt-md'), json: $('opt-json'), expand: $('opt-expand'), askName: $('opt-name'),
+  dev: $('opt-dev'), capture: $('capture'),
 };
 
 let lastMd = null;
@@ -20,6 +21,8 @@ async function loadPrefs() {
   els.json.checked = prefs.json;
   els.expand.checked = prefs.expand;
   if (els.askName) els.askName.checked = prefs.askName;
+  if (els.dev) els.dev.checked = prefs.dev;
+  showCapture();
 }
 
 function readPrefs() {
@@ -28,7 +31,17 @@ function readPrefs() {
     json: els.json.checked,
     expand: els.expand.checked,
     askName: els.askName ? els.askName.checked : false,
+    dev: els.dev ? els.dev.checked : false,
   };
+}
+
+/* The capture button is for people adding support for a new site. It shows in
+   developer mode, and automatically when nothing here is recognised — that is
+   the moment a dump is worth taking. */
+let siteSupported = false;
+function showCapture() {
+  if (!els.capture) return;
+  els.capture.hidden = !((els.dev && els.dev.checked) || !siteSupported);
 }
 
 const savePrefs = () => chrome.storage.local.set({ [PREFS]: readPrefs() });
@@ -52,6 +65,8 @@ async function detect() {
       els.site.innerHTML = `<b>${info.label}</b> ${where} detected` +
         (info.messages ? ` — ${info.messages} message${info.messages === 1 ? '' : 's'} on screen` : '');
       els.run.disabled = false;
+      siteSupported = true;
+      showCapture();
       if (info.kind === 'share') {
         els.status.innerHTML = '<span class="warn">Shared snapshots have tool payloads stripped by the site. ' +
           'For a full tool log, the chat owner needs to export from the original conversation.</span>';
@@ -60,6 +75,8 @@ async function detect() {
     }
     els.site.textContent = 'No supported chat found on this page.';
     els.run.disabled = true;
+    siteSupported = false;
+    showCapture();
     return null;
   } catch (err) {
     els.site.textContent = 'Cannot read this page (try a claude.ai chat tab).';
@@ -138,9 +155,31 @@ els.copy.addEventListener('click', async () => {
   els.copy.textContent = 'Copied';
   setTimeout(() => { els.copy.textContent = 'Copy Markdown'; }, 1500);
 });
-for (const el of [els.md, els.json, els.expand, els.askName]) {
+for (const el of [els.md, els.json, els.expand, els.askName, els.dev]) {
   if (el) el.addEventListener('change', savePrefs);
 }
+if (els.dev) els.dev.addEventListener('change', showCapture);
+
+if (els.capture) els.capture.addEventListener('click', async () => {
+  const tab = await activeTab();
+  if (!tab || tab.id == null) return;
+  els.capture.disabled = true;
+  els.status.textContent = 'Capturing the page…';
+  try {
+    await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['content.js'] });
+    const r = await chrome.tabs.sendMessage(tab.id, { type: 'llm-export:capture' });
+    if (r && r.ok) {
+      els.status.innerHTML = `<span class="ok">Captured ${r.host} — ${r.kb} KB.</span>` +
+        (r.collapsed ? `<br>${r.collapsed} collapsed block(s) were not opened; expand a tool call ` +
+                       'and a thinking block by hand, then capture again.' : '');
+    } else {
+      els.status.innerHTML = `<span class="err">${(r && r.error) || 'Capture failed.'}</span>`;
+    }
+  } catch (err) {
+    els.status.innerHTML = `<span class="err">${String(err && err.message || err)}</span>`;
+  }
+  els.capture.disabled = false;
+});
 
 /* shown so a reload after an update is visibly confirmed */
 const verEl = document.getElementById('ver');

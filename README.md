@@ -130,7 +130,17 @@ window.LLM_EXPORT_OPTS = { md: true, json: false, copyMd: true };
 | --- | --- | --- | --- | --- |
 | claude.ai | `claude` | yes | yes, when present | yes — payloads except on share links |
 
-Adding another site means writing one file in `src/providers/` — see
+### Want a site supported?
+
+You don't need to write any code. Tick **Developer mode** in the popup, open a conversation on that
+site, expand a tool call and a thinking block by hand, and press **Capture this page**. Then
+[open an issue](../../issues/new?template=site-support.yml) and attach the file.
+
+> **A capture contains the whole conversation**, not just the page's structure — and attaching it to
+> an issue makes it readable by anyone who can see that issue. The safest capture is a throwaway
+> chat made for the purpose: a few messages that exercise a tool call is plenty.
+
+If you'd rather write it yourself, a site is one file in `src/providers/` — see
 [docs/adding-a-provider.md](docs/adding-a-provider.md).
 
 ## Development

@@ -1,0 +1,79 @@
+name: Request support for a site
+description: Ask for a chat site to be supported, and attach a capture of it
+title: "Support: <site name>"
+labels: ["site-support"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping. Adding a site needs a **capture** — a dump of the page, taken by the
+        extension itself. You do not need to write any code.
+
+        **Please read the privacy note before attaching one.**
+
+  - type: input
+    id: site
+    attributes:
+      label: Which site?
+      placeholder: e.g. chatgpt.com, gemini.google.com
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## How to take a capture
+
+        1. Install the extension (see the README), open its popup, tick **Developer mode**.
+        2. Open a conversation on the site.
+        3. **Expand a tool call and a thinking block by hand**, if it has them. This matters more
+           than anything else here — on most sites the contents of those blocks do not exist in the
+           page until you click them open, so a capture taken while they are closed shows the
+           labels and nothing behind them.
+        4. Press **Capture this page**. A `capture-<site>-<date>.json` appears in
+           `Downloads/llm-export/`.
+
+        If the result says *"N collapsed block(s) were not opened"*, open them and capture again.
+
+        Most useful, if you can manage more than one: a short conversation, a **long** one (30+
+        messages, scrolled to the top — that shows whether the site keeps the whole conversation in
+        the page), one with tool calls and thinking expanded, and a share link if the site has
+        sharing.
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy — please read
+      description: |
+        **A capture contains the entire conversation**, not just its structure — every message, and
+        the page around it. Attaching one to this issue makes it readable by anyone who can see the
+        issue, and it stays in the issue's history even if you delete the file later.
+
+        The safest capture is a throwaway chat made for the purpose: a few messages that exercise a
+        tool call or a thinking block is plenty, and it contains nothing about you.
+      options:
+        - label: I understand the capture contains the full conversation, and I am happy for it to be visible to anyone who can see this issue.
+          required: true
+        - label: I have checked the conversation in this capture for anything I would not want read by a stranger.
+          required: true
+
+  - type: textarea
+    id: capture
+    attributes:
+      label: Capture file
+      description: Drag the `.json` file into this box to attach it. GitHub accepts `.json` attachments up to 25 MB.
+      placeholder: Drop the capture file here.
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else?
+      description: |
+        Useful things to mention: whether the conversation was long or short, whether you expanded
+        anything before capturing, whether the site has more than one chat mode (some do, and they
+        can be built differently).
+    validations:
+      required: false

@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.1.1 — 2026-09-21
+
+**The capture tool was calling every site "not virtualised", including ones it could not possibly
+know about.** The check relied on `aria-setsize`, which Claude sets and ChatGPT, Gemini, DeepSeek
+and AI Studio all do not — so it fell through to a confident `false` on every one of them. A
+contributor would have taken that at face value and written a provider that reads the page once,
+which is exactly how an exporter silently keeps only the messages that happened to be on screen.
+
+It now measures how far the page scrolls against how many message-like nodes are actually present,
+counted across the several conventions sites use for them — custom elements, `data-turn`, author
+roles, test ids, class names. A transcript spanning twenty screens while holding four messages is
+virtualised. Too short to judge now reports `null` rather than guessing, and the capture prints a
+table of what each probe found.
+
+Also adds a GitHub issue template for requesting a site, so someone who does not write code can
+attach a capture — with the privacy consequences spelled out on the form rather than assumed.
+
 ## 1.1.0 — 2026-09-21
 
 **Page capture, for adding support for a new site.** Tick **Developer mode** in the popup and a

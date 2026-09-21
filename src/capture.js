@@ -44,10 +44,41 @@
     return out;
   }
 
+  /* Count the nodes that look like they hold one message. Sites label these
+     very differently — custom elements on Gemini and AI Studio, data-turn on
+     ChatGPT, data-testid on Claude, plain classes on DeepSeek — so cast wide
+     and report what each pattern found rather than guessing a single answer. */
+  function messageNodeCounts() {
+    const probes = {
+      'aria posinset':      '[aria-posinset]',
+      'role=article':       '[role="article"], article',
+      'data-turn':          '[data-turn], [data-turn-id], [data-turn-role]',
+      'author role':        '[data-message-author-role], [data-message-id]',
+      'custom elements':    'user-query, model-response, ms-chat-turn',
+      'testid message':     '[data-testid*="message" i], [data-testid*="turn" i], [data-testid*="conversation-turn" i]',
+      'class message':      '[class*="message" i]:not([class*="messages" i]), [class*="chat-turn" i]',
+    };
+    const out = {};
+    for (const [label, sel] of Object.entries(probes)) {
+      try { out[label] = document.querySelectorAll(sel).length; } catch (_) { out[label] = null; }
+    }
+    return out;
+  }
+
   function capture() {
     const posinset = document.querySelectorAll('[aria-posinset]').length;
     const setsize  = document.querySelector('[aria-setsize]');
     const total    = setsize ? +setsize.getAttribute('aria-setsize') : null;
+
+    /* How far the page scrolls, in viewports. A transcript that scrolls for
+       twenty screens but holds four message nodes is virtualised: most of the
+       conversation is not in the page, and an exporter that reads the DOM once
+       would quietly keep only what was on screen. */
+    const tall   = scrollers();
+    const screens = tall.reduce((best, s) =>
+      Math.max(best, s.clientHeight ? s.scrollHeight / s.clientHeight : 0), 0);
+    const nodes  = messageNodeCounts();
+    const mostNodes = Math.max(0, ...Object.values(nodes).filter(n => typeof n === 'number'));
 
     return {
       capturedAt: new Date().toISOString(),
@@ -62,12 +93,19 @@
         dataTestIds: attrValues('data-testid'),
         dataCds: attrValues('data-cds'),
         roles: attrValues('role', 30),
-        scrollers: scrollers(),
-        articleNodes: document.querySelectorAll('[role="article"], article').length,
+        scrollers: tall,
+        screensOfScroll: Math.round(screens * 10) / 10,
+        messageNodes: nodes,
+        articleNodes: nodes['role=article'],
         posinsetNodes: posinset,
         ariaSetsize: total,
-        /* far more messages claimed than present = the list is virtualised */
-        looksVirtualised: !!(total && total > posinset),
+        /* Two independent signals. aria-setsize is definitive where a site sets
+           it, but most do not; otherwise infer from scroll length against how
+           many message nodes are actually present. */
+        looksVirtualised: (total && total > posinset) ? true
+                        : (screens >= 4 && mostNodes && mostNodes < screens) ? true
+                        : (screens >= 4 && mostNodes >= screens) ? false
+                        : null,   // too short to tell
         expandableButtons: document.querySelectorAll('[aria-expanded]').length,
         collapsedButtons: document.querySelectorAll('[aria-expanded="false"]').length,
         codeBlocks: document.querySelectorAll('pre, code').length,
@@ -88,9 +126,12 @@
     const name = captureName(dump);
     NS.download(name, JSON.stringify(dump, null, 2), 'application/json');
     console.log('%c[llm-export] captured ' + name, 'color:#c96442;font-weight:bold');
+    const v = dump.hints.looksVirtualised;
     console.log('  html: ' + (dump.html.length / 1024).toFixed(0) + ' KB' +
-                ' | looks virtualised: ' + dump.hints.looksVirtualised +
+                ' | ' + dump.hints.screensOfScroll + ' screens of scroll' +
+                ' | virtualised: ' + (v === null ? 'too short to tell' : v) +
                 ' | collapsed blocks: ' + dump.hints.collapsedButtons);
+    console.table(dump.hints.messageNodes);
     return dump;
   }
 

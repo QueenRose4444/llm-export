@@ -4,7 +4,7 @@ Save an AI chat as a readable **Markdown** transcript plus a **JSON** file you c
 
 Built because a shared chat is not a usable record: the tool calls are hidden behind carets, long conversations only keep a handful of messages in the page at a time, and copy-paste loses the lot.
 
-**v1 supports Claude (claude.ai).** The provider layer is built so other chat sites can be added without touching the rest.
+**Supports Claude and Gemini.** Each site is one small adapter, so adding another does not touch the rest.
 
 ---
 

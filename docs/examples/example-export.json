@@ -1,0 +1,193 @@
+{
+  "exportedAt": "2026-09-21T07:58:00.425Z",
+  "exporter": "llm-export v1.2.1",
+  "source": {
+    "url": "https://claude.ai/chat/00000000-0000-0000-0000-000000000000",
+    "provider": "claude",
+    "site": "claude.ai",
+    "title": "API design notes",
+    "kind": "chat",
+    "sharedBy": null,
+    "virtualised": true
+  },
+  "stats": {
+    "messages": 4,
+    "user": 2,
+    "assistant": 2,
+    "toolCalls": 2,
+    "toolPayloadsHidden": 0,
+    "thinkingBlocks": 1,
+    "expandClicks": 0
+  },
+  "notes": {
+    "hiddenPayloads": null
+  },
+  "messages": [
+    {
+      "index": 1,
+      "role": "user",
+      "time": "2026-09-21T10:14:02.000Z",
+      "parts": [
+        {
+          "type": "text",
+          "markdown": "How should the public API handle rate limits?\nKeep it simple."
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "role": "assistant",
+      "time": "2026-09-21T10:14:31.000Z",
+      "parts": [
+        {
+          "type": "thinking",
+          "label": "Thought process",
+          "text": "The question is about client-facing behaviour rather than server enforcement, so the useful answer covers the response shape and what a caller should do with it. Worth checking what the docs already say before answering.",
+          "expanded": true
+        },
+        {
+          "type": "tools",
+          "label": "Used a tool",
+          "calls": [
+            {
+              "name": "search_docs",
+              "group": "Used a tool",
+              "expanded": true,
+              "hidden": false,
+              "payloads": [
+                {
+                  "label": "Request",
+                  "lang": "json",
+                  "text": "{\n  \"query\": \"rate limits\",\n  \"limit\": 5\n}"
+                },
+                {
+                  "label": "Response",
+                  "lang": "json",
+                  "text": "{\n  \"results\": 3,\n  \"top\": \"429 backoff\",\n  \"sections\": [\"limits\", \"retry\", \"quotas\"]\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "markdown": "Return `429` with a `Retry-After` header and let the client back off.\n\nThree things worth deciding up front:\n\n- Whether limits are per key or per endpoint\n- What the window is, and whether it slides\n- Whether a burst allowance exists\n\nThe header is the part clients actually need — without it they guess, and guessing means retry storms."
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "role": "user",
+      "time": "2026-09-21T10:16:45.000Z",
+      "parts": [
+        {
+          "type": "text",
+          "markdown": "What about a per-endpoint override?"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "role": "assistant",
+      "time": "2026-09-21T10:17:02.000Z",
+      "parts": [
+        {
+          "type": "tools",
+          "label": "Used a tool",
+          "calls": [
+            {
+              "name": "get_config",
+              "group": "Used a tool",
+              "expanded": true,
+              "hidden": false,
+              "payloads": [
+                {
+                  "label": "Request",
+                  "lang": "json",
+                  "text": "{\n  \"section\": \"limits\"\n}"
+                },
+                {
+                  "label": "Response",
+                  "lang": "json",
+                  "text": "{\n  \"default_rpm\": 60,\n  \"overrides\": {\n    \"/export\": 10\n  }\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "markdown": "Overrides are already supported — `/export` sits at 10 requests a minute against a default of 60.\n\nDocument the override in the endpoint's own reference rather than only in the limits page, or nobody finds it until they hit it."
+        }
+      ]
+    }
+  ],
+  "toolCalls": [
+    {
+      "n": 1,
+      "message": 2,
+      "name": "search_docs",
+      "group": "Used a tool",
+      "hidden": false,
+      "request": "{\n  \"query\": \"rate limits\",\n  \"limit\": 5\n}",
+      "response": "{\n  \"results\": 3,\n  \"top\": \"429 backoff\",\n  \"sections\": [\"limits\", \"retry\", \"quotas\"]\n}",
+      "requestJson": {
+        "query": "rate limits",
+        "limit": 5
+      },
+      "responseJson": {
+        "results": 3,
+        "top": "429 backoff",
+        "sections": [
+          "limits",
+          "retry",
+          "quotas"
+        ]
+      },
+      "payloads": [
+        {
+          "label": "Request",
+          "lang": "json",
+          "text": "{\n  \"query\": \"rate limits\",\n  \"limit\": 5\n}"
+        },
+        {
+          "label": "Response",
+          "lang": "json",
+          "text": "{\n  \"results\": 3,\n  \"top\": \"429 backoff\",\n  \"sections\": [\"limits\", \"retry\", \"quotas\"]\n}"
+        }
+      ],
+      "looksLikeError": false
+    },
+    {
+      "n": 2,
+      "message": 4,
+      "name": "get_config",
+      "group": "Used a tool",
+      "hidden": false,
+      "request": "{\n  \"section\": \"limits\"\n}",
+      "response": "{\n  \"default_rpm\": 60,\n  \"overrides\": {\n    \"/export\": 10\n  }\n}",
+      "requestJson": {
+        "section": "limits"
+      },
+      "responseJson": {
+        "default_rpm": 60,
+        "overrides": {
+          "/export": 10
+        }
+      },
+      "payloads": [
+        {
+          "label": "Request",
+          "lang": "json",
+          "text": "{\n  \"section\": \"limits\"\n}"
+        },
+        {
+          "label": "Response",
+          "lang": "json",
+          "text": "{\n  \"default_rpm\": 60,\n  \"overrides\": {\n    \"/export\": 10\n  }\n}"
+        }
+      ],
+      "looksLikeError": false
+    }
+  ]
+}

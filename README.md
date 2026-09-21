@@ -105,6 +105,10 @@ Here's listing 42 — a two bedroom on Example Street…
 
 `requestJson` / `responseJson` are pre-parsed when the payload was valid JSON, so a connector audit is a `jq` away.
 
+A full pair of real output files, from an invented conversation:
+[example-export.md](docs/examples/example-export.md) and
+[example-export.json](docs/examples/example-export.json).
+
 ---
 
 ## No-install alternative: the console script

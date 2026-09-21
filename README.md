@@ -6,6 +6,8 @@ Built because a shared chat is not a usable record: the tool calls are hidden be
 
 **Supports Claude and Gemini.** Each site is one small adapter, so adding another does not touch the rest.
 
+![The extension popup, showing a Claude conversation detected and two files saved](docs/images/store-1-popup.jpg)
+
 ---
 
 ## Install (Chrome, Edge, Brave — any Chromium browser)

@@ -7,6 +7,7 @@ node tests/run.mjs        # parser checks, against real headless Chrome
 node tests/run.mjs --headed
 node tests/extension.mjs  # loads the packed extension and drives a full export
 node tests/make-icons.mjs # re-render the icons
+node tests/make-store-images.mjs  # re-render the listing images in docs/images/
 ```
 
 ## Layout
